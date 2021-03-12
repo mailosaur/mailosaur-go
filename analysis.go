@@ -20,6 +20,6 @@ type SpamAnalysisResult struct {
 }
 
 func (s *AnalysisService) Spam(id string) (*SpamAnalysisResult, error) { 
-    result, err := s.client.HttpGet(&SpamAnalysisResult{}, "/api/analysis/spam/" + id)
+    result, err := s.client.HttpGet(&SpamAnalysisResult{}, "api/analysis/spam/" + id)
     return result.(*SpamAnalysisResult), err
 }

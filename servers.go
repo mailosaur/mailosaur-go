@@ -26,27 +26,27 @@ type ServerCreateOptions struct {
 }
 
 func (s *ServersService) List() (*ServerListResult, error) { 
-    result, err := s.client.HttpGet(&ServerListResult{}, "/api/servers")
+    result, err := s.client.HttpGet(&ServerListResult{}, "api/servers")
     return result.(*ServerListResult), err
 }
 
 func (s *ServersService) Create(serverCreateOptions ServerCreateOptions) (*Server, error) {
-    result, err := s.client.HttpPost(&Server{}, "/api/servers", serverCreateOptions)
+    result, err := s.client.HttpPost(&Server{}, "api/servers", serverCreateOptions)
     return result.(*Server), err
 }
 
 func (s *ServersService) Get(id string) (*Server, error) {
-    result, err := s.client.HttpGet(&Server{}, "/api/servers/" + id)
+    result, err := s.client.HttpGet(&Server{}, "api/servers/" + id)
     return result.(*Server), err
 }
 
 func (s *ServersService) Update(id string, server *Server) (*Server, error) {
-    result, err := s.client.HttpPut(&Server{}, "/api/servers/" + id, server)
+    result, err := s.client.HttpPut(&Server{}, "api/servers/" + id, server)
     return result.(*Server), err
 }
 
 func (s *ServersService) Delete(id string) (error) {
-    return s.client.HttpDelete("/api/servers/" + id)
+    return s.client.HttpDelete("api/servers/" + id)
 }
 
 func (s *ServersService) GenerateEmailAddress(id string) (string) {

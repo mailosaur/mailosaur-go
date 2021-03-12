@@ -111,7 +111,7 @@ type MessageSearchParams struct {
 
 func (s *MessagesService) List(params *MessageListParams) (*MessageListResult, error) { 
     u := buildPagePath(
-        "/api/messages?server=" + params.Server,
+        "api/messages?server=" + params.Server,
         params.Page,
         params.ItemsPerPage,
         params.ReceivedAfter,
@@ -147,7 +147,7 @@ func (s *MessagesService) Search(params *MessageSearchParams, criteria *SearchCr
     startTime := time.Now()
 
     u := buildPagePath(
-        "/api/messages/search?server=" + params.Server,
+        "api/messages/search?server=" + params.Server,
         params.Page,
         params.ItemsPerPage,
         params.ReceivedAfter,
@@ -212,14 +212,14 @@ func (s *MessagesService) Search(params *MessageSearchParams, criteria *SearchCr
 }
 
 func (s *MessagesService) GetById(id string) (*Message, error) { 
-    result, err := s.client.HttpGet(&Message{}, "/api/messages/" + id)
+    result, err := s.client.HttpGet(&Message{}, "api/messages/" + id)
     return result.(*Message), err
 }
 
 func (s *MessagesService) Delete(id string) (error) { 
-    return s.client.HttpDelete("/api/messages/" + id)
+    return s.client.HttpDelete("api/messages/" + id)
 }
 
 func (s *MessagesService) DeleteAll(server string) (error) {
-    return s.client.HttpDelete("/api/messages?server=" + server)
+    return s.client.HttpDelete("api/messages?server=" + server)
 }
