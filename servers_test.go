@@ -4,7 +4,7 @@ import (
 	"testing"
     "log"
     "os"
-    assert "github.com/stretchr/testify/require"
+    "github.com/stretchr/testify/assert"
 )
 
 func init() {
@@ -34,8 +34,8 @@ func TestGetNotFound(t *testing.T) {
     // Should throw if server is not found
     _, err := client.Servers.Get("efe907e9-74ed-4113-a3e0-a3d41d914765")
     
-    // TODO Assert is a MailosaurException
     assert.Error(t, err)
+    assert.IsType(t, &mailosaurError{}, err)
 }
 
 func TestCrud(t *testing.T) {
@@ -80,20 +80,20 @@ func TestCrud(t *testing.T) {
     // Attempting to delete again should fail
     err = client.Servers.Delete(retrievedServer.Id)
     assert.Error(t, err)
-    // TODO Assert is a MailosaurException
+    assert.IsType(t, &mailosaurError{}, err)
 }
 
 func TestFailedCreate(t *testing.T) {
     serverCreateOptions := ServerCreateOptions{}
     
     _, err := client.Servers.Create(serverCreateOptions)
+    mErr := err.(*mailosaurError)
     
-    // TODO Assert is a MailosaurException
-    assert.Error(t, err)
+    assert.Error(t, mErr)
+    assert.IsType(t, &mailosaurError{}, mErr)
 
-    // TODO Implement MailosaurException structure
-    // Assert.Equal("Request had one or more invalid parameters.", ex.Message);
-    // Assert.Equal("invalid_request", ex.ErrorType);
-    // Assert.Equal(400, ex.HttpStatusCode);
-    // Assert.Equal("{\"type\":\"ValidationError\",\"messages\":{\"name\":\"Please provide a name for your server\"}}", ex.HttpResponseBody);
+    assert.Equal(t, "Request had one or more invalid parameters.", mErr.Message)
+    assert.Equal(t, "invalid_request", mErr.ErrorType)
+    assert.Equal(t, 400, mErr.HttpStatusCode)
+    // assert.Equal(t, "{\"type\":\"ValidationError\",\"messages\":{\"name\":\"Please provide a name for your server\"}}", mErr.HttpResponseBody)
 }

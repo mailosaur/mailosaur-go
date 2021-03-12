@@ -1,7 +1,7 @@
 package mailosaur
 
 import (
-    "errors"
+    // "errors"
 	"io"
     "io/ioutil"
 	"bytes"
@@ -24,10 +24,15 @@ type MailosaurClient struct {
     Files       *FilesService
 }
 
-type MailosaurError struct {
-    Type        string              `json:"type"`
-    Url         string              `json:"url"`
-    Messages    map[string]string   `json:"messages"`
+type mailosaurError struct {
+    Message             string
+    ErrorType           string
+    HttpStatusCode      int
+    HttpResponseBody    string
+}
+
+func (e *mailosaurError) Error() string {
+    return e.Message
 }
 
 func New(apiKey string) *MailosaurClient {
@@ -39,7 +44,7 @@ func NewWithClient(apiKey string, httpClient *http.Client) *MailosaurClient {
 		baseUrl: "https://mailosaur.com/",
 		apiKey:  apiKey,
 		httpClient: httpClient,
-        userAgent: "mailosaur-go/0.2.0",
+        userAgent: "mailosaur-go/0.3.0",
 	}
 
 	c.Servers = &ServersService{client: c}
@@ -90,15 +95,31 @@ func (c *MailosaurClient) executeRequestWithDelayHeader(result interface{}, meth
     defer resp.Body.Close()
 
     if (resp.StatusCode != expectedStatus) {
-        var mailosaurError *MailosaurError
-        if (resp.StatusCode == 400) {
-            json.NewDecoder(resp.Body).Decode(&mailosaurError)
+        err := &mailosaurError{}
+        switch resp.StatusCode {
+            case 400:
+                err.Message = "Request had one or more invalid parameters."
+                err.ErrorType = "invalid_request"
+            case 401:
+                err.Message = "Authentication failed, check your API key."
+                err.ErrorType = "authentication_error"
+            case 403:
+                err.Message = "Insufficient permission to perform that task."
+                err.ErrorType = "permission_error"
+            case 404:
+                err.Message = "Request did not find any matching resources."
+                err.ErrorType = "invalid_request"
+            default:
+                err.Message = "An API error occurred, see httpResponse for further information."
+                err.ErrorType = "api_error"
+            break;
         }
-        // TODO MailosaurException
-        // for k, v := range mailosaurError.Messages {
-        //     fmt.Println(k + ": " + v)
-        // }
-        err = errors.New("Unexpected status: " + fmt.Sprint(resp.StatusCode))
+
+        err.HttpStatusCode = resp.StatusCode
+        if (err.HttpStatusCode != 204) {
+            json.NewDecoder(resp.Body).Decode(err.HttpResponseBody)
+        }
+
         return result, "", err
     }
 

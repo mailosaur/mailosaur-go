@@ -7,7 +7,7 @@ import (
     "os"
     "time"
     "strings"
-    assert "github.com/stretchr/testify/require"
+    "github.com/stretchr/testify/assert"
 )
 
 func init() {
@@ -88,15 +88,15 @@ func TestMessageGetById(t *testing.T) {
 func TestMessageGetByIdNotFound(t *testing.T) {
     _, err := client.Messages.GetById("")
 
-    // TODO Assert is a MailosaurException
     assert.Error(t, err)
+    assert.IsType(t, &mailosaurError{}, err)
 }
 
 func TestSearchNoCriteriaError(t *testing.T) {
     _, err:= client.Messages.Search(&MessageSearchParams{ Server : server }, &SearchCriteria{});
 
-    // TODO Assert is a MailosaurException
     assert.Error(t, err)
+    assert.IsType(t, &mailosaurError{}, err)
 }
 
 // TODO Implement ErrorOnTimeout
@@ -133,8 +133,8 @@ func TestSearchBySentFromInvalidEmail(t *testing.T) {
         SentFrom: ".not_an_email_address",
     })
 
-    // TODO Assert is a MailosaurException
     assert.Error(t, err)
+    assert.IsType(t, &mailosaurError{}, err)
 }
 
 func TestSearchBySentTo(t *testing.T) {
@@ -158,8 +158,8 @@ func TestSearchBySentToInvalidEmail(t *testing.T) {
         SentTo: ".not_an_email_address",
     })
 
-    // TODO Assert is a MailosaurException
     assert.Error(t, err)
+    assert.IsType(t, &mailosaurError{}, err)
 }
 
 func TestSearchByBody(t *testing.T) {
@@ -249,9 +249,10 @@ func TestDeleteMessage(t *testing.T) {
     assert.NoError(t, err)
 
     // Attempting to delete again should fail
-    // err = client.Messages.Delete(targetEmailId)
-    // TODO Assert is a MailosaurException
-    // assert.Error(t, err)
+    err = client.Messages.Delete(targetEmailId)
+    
+    assert.Error(t, err)
+    assert.IsType(t, &mailosaurError{}, err)
 }
 
 func validateEmail(t *testing.T, email *Message) {

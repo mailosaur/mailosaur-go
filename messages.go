@@ -3,7 +3,6 @@ package mailosaur
 import (
 	"time"
     "log"
-    "errors"
     "strings"
     "strconv"
 )
@@ -106,7 +105,7 @@ type MessageSearchParams struct {
     Page            int
     ItemsPerPage    int
     Timeout         int
-    ErrorOnTimeout  *bool // TODO use pointer instead (nil)
+    ErrorOnTimeout  bool // TODO use pointer instead (nil)
 }
 
 func (s *MessagesService) List(params *MessageListParams) (*MessageListResult, error) { 
@@ -158,6 +157,12 @@ func (s *MessagesService) Search(params *MessageSearchParams, criteria *SearchCr
         criteria.Match = "ALL"
     }
 
+    // Default value for ErrorOnTimeout
+    // TODO Implement ErrorOnTimeout
+    if (params.ErrorOnTimeout == false) {
+        params.ErrorOnTimeout = true
+    }
+
     for {
         result, delayHeader, err := s.client.executeRequestWithDelayHeader(&MessageListResult{}, "POST", u, criteria, 200)
 
@@ -197,13 +202,14 @@ func (s *MessagesService) Search(params *MessageSearchParams, criteria *SearchCr
 
         // Stop if timeout will be exceeded
         if (time.Now().Sub(startTime).Seconds() + float64(delay) > float64(params.Timeout)) {
-            // TODO Implement ErrorOnTimeout
-            // if (params.ErrorOnTimeout == false) {
-            //     return result
-            // }
+            if (params.ErrorOnTimeout == false) {
+                return result.(*MessageListResult), nil
+            }
 
-            // TODO throw new MailosaurException("No matching messages found in time. By default, only messages received in the last hour are checked (use receivedAfter to override this).", "search_timeout");
-            err := errors.New("No matching messages found in time. By default, only messages received in the last hour are checked (use receivedAfter to override this).")
+            err := &mailosaurError{
+                Message: "No matching messages found in time. By default, only messages received in the last hour are checked (use receivedAfter to override this).",
+                ErrorType: "search_timeout",
+            }
             return nil, err
         }
 

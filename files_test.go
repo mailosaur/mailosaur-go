@@ -6,7 +6,7 @@ import (
     "fmt"
     "os"
     "strings"
-    assert "github.com/stretchr/testify/require"
+    "github.com/stretchr/testify/assert"
 )
 
 func init() {
