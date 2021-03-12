@@ -39,7 +39,7 @@ func NewWithClient(apiKey string, httpClient *http.Client) *MailosaurClient {
 		baseUrl: "https://mailosaur.com/",
 		apiKey:  apiKey,
 		httpClient: httpClient,
-        userAgent: "mailosaur-go/0.1.0",
+        userAgent: "mailosaur-go/0.2.0",
 	}
 
 	c.Servers = &ServersService{client: c}
