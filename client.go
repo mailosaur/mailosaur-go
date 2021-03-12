@@ -52,6 +52,9 @@ func NewWithClient(apiKey string, httpClient *http.Client) *MailosaurClient {
 
 func (c *MailosaurClient) httpRequest(method, path string, body interface{}) (*http.Request, error) {
     u := c.baseUrl + path
+
+    fmt.Println(method + " " + u)
+
     var buf io.ReadWriter
     if body != nil {
         buf = new(bytes.Buffer)
