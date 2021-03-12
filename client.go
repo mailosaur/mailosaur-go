@@ -1,7 +1,6 @@
 package mailosaur
 
 import (
-    // "errors"
 	"io"
     "io/ioutil"
 	"bytes"
@@ -44,7 +43,7 @@ func NewWithClient(apiKey string, httpClient *http.Client) *MailosaurClient {
 		baseUrl: "https://mailosaur.com/",
 		apiKey:  apiKey,
 		httpClient: httpClient,
-        userAgent: "mailosaur-go/0.3.0",
+        userAgent: "mailosaur-go/0.4.0",
 	}
 
 	c.Servers = &ServersService{client: c}
@@ -117,7 +116,8 @@ func (c *MailosaurClient) executeRequestWithDelayHeader(result interface{}, meth
 
         err.HttpStatusCode = resp.StatusCode
         if (err.HttpStatusCode != 204) {
-            json.NewDecoder(resp.Body).Decode(err.HttpResponseBody)
+            bodyBytes, _ := ioutil.ReadAll(resp.Body)
+            err.HttpResponseBody = string(bodyBytes)
         }
 
         return result, "", err
