@@ -105,7 +105,7 @@ type MessageSearchParams struct {
     Page            int
     ItemsPerPage    int
     Timeout         int
-    ErrorOnTimeout  bool // TODO use pointer instead (nil)
+    ErrorOnTimeout  *bool
 }
 
 func (s *MessagesService) List(params *MessageListParams) (*MessageListResult, error) { 
@@ -158,9 +158,9 @@ func (s *MessagesService) Search(params *MessageSearchParams, criteria *SearchCr
     }
 
     // Default value for ErrorOnTimeout
-    // TODO Implement ErrorOnTimeout
-    if (params.ErrorOnTimeout == false) {
-        params.ErrorOnTimeout = true
+    if (params.ErrorOnTimeout == nil) {
+        t := true
+        params.ErrorOnTimeout = &t
     }
 
     for {
@@ -202,7 +202,7 @@ func (s *MessagesService) Search(params *MessageSearchParams, criteria *SearchCr
 
         // Stop if timeout will be exceeded
         if (time.Now().Sub(startTime).Seconds() + float64(delay) > float64(params.Timeout)) {
-            if (params.ErrorOnTimeout == false) {
+            if (*params.ErrorOnTimeout == false) {
                 return result.(*MessageListResult), nil
             }
 

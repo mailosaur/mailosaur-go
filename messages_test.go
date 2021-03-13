@@ -99,18 +99,18 @@ func TestSearchNoCriteriaError(t *testing.T) {
     assert.IsType(t, &mailosaurError{}, err)
 }
 
-// TODO Implement ErrorOnTimeout
-// func TestSearchTimeoutErrorSuppressed(t *testing.T) {
-//     result, _ := client.Messages.Search(&MessageSearchParams{
-//         Server: server,
-//         Timeout: 1,
-//         ErrorOnTimeout: false,
-//     }, &SearchCriteria{
-//         SentFrom: "neverfound@example.com",
-//     })
+func TestSearchTimeoutErrorSuppressed(t *testing.T) {
+    f := false
+    result, _ := client.Messages.Search(&MessageSearchParams{
+        Server: server,
+        Timeout: 1,
+        ErrorOnTimeout: &f,
+    }, &SearchCriteria{
+        SentFrom: "neverfound@example.com",
+    })
     
-//     assert.Equal(t, 0, len(result.Items))
-// }
+    assert.Equal(t, 0, len(result.Items))
+}
 
 func TestSearchBySentFrom(t *testing.T) {
     targetEmail := emails[1]
