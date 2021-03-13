@@ -30,7 +30,7 @@ go get -u github.com/mailosaur/mailosaur-go
 
 ## Documentation
 
-Please see the [Go client reference](https://mailosaur.com/docs/) for the most up-to-date documentation.
+Please see the [Go client reference](https://mailosaur.com/docs/email-testing/go/) for the most up-to-date documentation.
 
 ## Usage
 
