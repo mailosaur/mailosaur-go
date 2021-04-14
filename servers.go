@@ -12,7 +12,6 @@ type ServersService struct {
 
 type Server struct {
 	Id       string `json:"id"`
-	Password string `json:"password"`
 	Name     string `json:"name"`
 	Messages int    `json:"messages"`
 }

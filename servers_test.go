@@ -52,7 +52,6 @@ func TestCrud(t *testing.T) {
 
 	assert.False(t, len(createdServer.Id) == 0)
 	assert.Equal(t, serverName, createdServer.Name)
-	assert.False(t, len(createdServer.Password) == 0)
 	// assert.NotNil(t, createdServer.Users == 0)
 	assert.Equal(t, 0, createdServer.Messages)
 
@@ -61,7 +60,6 @@ func TestCrud(t *testing.T) {
 
 	assert.Equal(t, createdServer.Id, retrievedServer.Id)
 	assert.Equal(t, createdServer.Name, retrievedServer.Name)
-	assert.False(t, len(retrievedServer.Password) == 0)
 	// Assert.NotNull(retrievedServer.Users)
 	assert.Equal(t, 0, retrievedServer.Messages)
 
@@ -71,7 +69,6 @@ func TestCrud(t *testing.T) {
 
 	assert.Equal(t, retrievedServer.Id, updatedServer.Id)
 	assert.Equal(t, retrievedServer.Name, updatedServer.Name)
-	assert.Equal(t, retrievedServer.Password, updatedServer.Password)
 	// Assert.Equal(retrievedServer.Users, updatedServer.Users)
 	assert.Equal(t, retrievedServer.Messages, updatedServer.Messages)
 
