@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -46,12 +45,12 @@ func init() {
 	email = result
 }
 
-func TestFilesGetEmail(t *testing.T) {
-	bytes, _ := client.Files.GetEmail(email.Id)
+// func TestFilesGetEmail(t *testing.T) {
+// 	bytes, _ := client.Files.GetEmail(email.Id)
 
-	assert.True(t, len(bytes) > 1)
-	assert.True(t, strings.Contains(string(bytes), email.Subject))
-}
+// 	assert.True(t, len(bytes) > 1)
+// 	assert.True(t, strings.Contains(string(bytes), email.Subject))
+// }
 
 func TestFilesGetAttachment(t *testing.T) {
 	attachment := email.Attachments[0]
