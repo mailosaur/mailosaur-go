@@ -39,6 +39,17 @@ func (s *ServersService) Get(id string) (*Server, error) {
 	return result.(*Server), err
 }
 
+func (s *ServersService) GetPassword(id string) (string, error) {
+	type Result struct {
+		Value string `json:"value"`
+	}
+
+	result, err := s.client.HttpGet(&Result{}, "api/servers/"+id+"/password")
+	parsed := result.(*Result)
+
+	return parsed.Value, err
+}
+
 func (s *ServersService) Update(id string, server *Server) (*Server, error) {
 	result, err := s.client.HttpPut(&Server{}, "api/servers/"+id, server)
 	return result.(*Server), err

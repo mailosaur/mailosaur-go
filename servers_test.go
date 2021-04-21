@@ -63,6 +63,11 @@ func TestCrud(t *testing.T) {
 	// Assert.NotNull(retrievedServer.Users)
 	assert.Equal(t, 0, retrievedServer.Messages)
 
+	password, err := client.Servers.GetPassword(createdServer.Id)
+	assert.NoError(t, err)
+
+	assert.True(t, len(password) >= 8)
+
 	retrievedServer.Name += " updated with ellipsis … and emoji 👨🏿‍🚒"
 	updatedServer, err := client.Servers.Update(retrievedServer.Id, retrievedServer)
 	assert.NoError(t, err)
