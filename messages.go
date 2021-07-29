@@ -159,7 +159,7 @@ func (s *MessagesService) Get(params *MessageSearchParams, criteria *SearchCrite
 
 	result, err := s.Search(params, criteria)
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 
 	return s.GetById(result.Items[0].Id)
