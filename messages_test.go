@@ -17,7 +17,11 @@ func init() {
 	server = os.Getenv("MAILOSAUR_SERVER")
 	verifiedDomain = os.Getenv("MAILOSAUR_VERIFIED_DOMAIN")
 
-	if len(apiKey) == 0 || len(server) == 0 || len(verifiedDomain) == 0 {
+	if len(verifiedDomain) == 0 {
+		verifiedDomain = "mailosaur.net"
+	}
+
+	if len(apiKey) == 0 || len(server) == 0 {
 		log.Fatal("Missing necessary environment variables - refer to README.md")
 	}
 
@@ -258,6 +262,10 @@ func TestDeleteMessage(t *testing.T) {
 }
 
 func TestCreateSendText(t *testing.T) {
+	if verifiedDomain == "mailosaur.net" {
+		t.Skip()
+	}
+
 	subject := "New message"
 
 	var message, err = client.Messages.Create(server, &MessageCreateOptions{
@@ -267,14 +275,16 @@ func TestCreateSendText(t *testing.T) {
 		Text:    "This is a new email",
 	})
 
-	fmt.Println(err)
-
 	assert.NoError(t, err)
 	assert.NotNil(t, message.Id)
 	assert.Equal(t, subject, message.Subject)
 }
 
 func TestCreateSendHtml(t *testing.T) {
+	if verifiedDomain == "mailosaur.net" {
+		t.Skip()
+	}
+
 	subject := "New HTML message"
 
 	var message, err = client.Messages.Create(server, &MessageCreateOptions{
@@ -284,14 +294,16 @@ func TestCreateSendHtml(t *testing.T) {
 		Html:    "This is a new email",
 	})
 
-	fmt.Println(err)
-
 	assert.NoError(t, err)
 	assert.NotNil(t, message.Id)
 	assert.Equal(t, subject, message.Subject)
 }
 
 func TestForwardText(t *testing.T) {
+	if verifiedDomain == "mailosaur.net" {
+		t.Skip()
+	}
+
 	body := "Forwarded message"
 	targetEmailId := emails[0].Id
 
@@ -306,6 +318,10 @@ func TestForwardText(t *testing.T) {
 }
 
 func TestForwardHtml(t *testing.T) {
+	if verifiedDomain == "mailosaur.net" {
+		t.Skip()
+	}
+
 	body := "<p>Forwarded <strong>HTML</strong> message.</p>"
 	targetEmailId := emails[0].Id
 
@@ -320,6 +336,10 @@ func TestForwardHtml(t *testing.T) {
 }
 
 func TestReplyText(t *testing.T) {
+	if verifiedDomain == "mailosaur.net" {
+		t.Skip()
+	}
+
 	body := "Reply message"
 	targetEmailId := emails[0].Id
 
@@ -333,6 +353,10 @@ func TestReplyText(t *testing.T) {
 }
 
 func TestReplyHtml(t *testing.T) {
+	if verifiedDomain == "mailosaur.net" {
+		t.Skip()
+	}
+
 	body := "<p>Reply <strong>HTML</strong> message.</p>"
 	targetEmailId := emails[0].Id
 
