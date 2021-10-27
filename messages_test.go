@@ -15,8 +15,9 @@ func init() {
 	apiKey := os.Getenv("MAILOSAUR_API_KEY")
 	baseUrl := os.Getenv("MAILOSAUR_BASE_URL")
 	server = os.Getenv("MAILOSAUR_SERVER")
+	verifiedDomain = os.Getenv("MAILOSAUR_VERIFIED_DOMAIN")
 
-	if len(apiKey) == 0 || len(server) == 0 {
+	if len(apiKey) == 0 || len(server) == 0 || len(verifiedDomain) == 0 {
 		log.Fatal("Missing necessary environment variables - refer to README.md")
 	}
 
@@ -254,6 +255,94 @@ func TestDeleteMessage(t *testing.T) {
 
 	assert.Error(t, err)
 	assert.IsType(t, &mailosaurError{}, err)
+}
+
+func TestCreateSendText(t *testing.T) {
+	subject := "New message"
+
+	var message, err = client.Messages.Create(server, &MessageCreateOptions{
+		To:      fmt.Sprintf("anything@%s", verifiedDomain),
+		Send:    true,
+		Subject: subject,
+		Text:    "This is a new email",
+	})
+
+	fmt.Println(err)
+
+	assert.NoError(t, err)
+	assert.NotNil(t, message.Id)
+	assert.Equal(t, subject, message.Subject)
+}
+
+func TestCreateSendHtml(t *testing.T) {
+	subject := "New HTML message"
+
+	var message, err = client.Messages.Create(server, &MessageCreateOptions{
+		To:      fmt.Sprintf("anything@%s", verifiedDomain),
+		Send:    true,
+		Subject: subject,
+		Html:    "This is a new email",
+	})
+
+	fmt.Println(err)
+
+	assert.NoError(t, err)
+	assert.NotNil(t, message.Id)
+	assert.Equal(t, subject, message.Subject)
+}
+
+func TestForwardText(t *testing.T) {
+	body := "Forwarded message"
+	targetEmailId := emails[0].Id
+
+	var message, err = client.Messages.Forward(targetEmailId, &MessageForwardOptions{
+		To:   fmt.Sprintf("anything@%s", verifiedDomain),
+		Text: body,
+	})
+
+	assert.NoError(t, err)
+	assert.NotNil(t, message.Id)
+	assert.Contains(t, message.Text.Body, body)
+}
+
+func TestForwardHtml(t *testing.T) {
+	body := "<p>Forwarded <strong>HTML</strong> message.</p>"
+	targetEmailId := emails[0].Id
+
+	var message, err = client.Messages.Forward(targetEmailId, &MessageForwardOptions{
+		To:   fmt.Sprintf("anything@%s", verifiedDomain),
+		Html: body,
+	})
+
+	assert.NoError(t, err)
+	assert.NotNil(t, message.Id)
+	assert.Contains(t, message.Html.Body, body)
+}
+
+func TestReplyText(t *testing.T) {
+	body := "Reply message"
+	targetEmailId := emails[0].Id
+
+	var message, err = client.Messages.Reply(targetEmailId, &MessageReplyOptions{
+		Text: body,
+	})
+
+	assert.NoError(t, err)
+	assert.NotNil(t, message.Id)
+	assert.Contains(t, message.Text.Body, body)
+}
+
+func TestReplyHtml(t *testing.T) {
+	body := "<p>Reply <strong>HTML</strong> message.</p>"
+	targetEmailId := emails[0].Id
+
+	var message, err = client.Messages.Reply(targetEmailId, &MessageReplyOptions{
+		Html: body,
+	})
+
+	assert.NoError(t, err)
+	assert.NotNil(t, message.Id)
+	assert.Contains(t, message.Html.Body, body)
 }
 
 func validateEmail(t *testing.T, email *Message) {

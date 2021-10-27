@@ -87,6 +87,25 @@ type MessageSummary struct {
 	Attachments int               `json:"attachments"`
 }
 
+type MessageCreateOptions struct {
+	To      string `json:"to"`
+	Send    bool   `json:"send"`
+	Subject string `json:"subject"`
+	Text    string `json:"text"`
+	Html    string `json:"html"`
+}
+
+type MessageForwardOptions struct {
+	To   string `json:"to"`
+	Text string `json:"text"`
+	Html string `json:"html"`
+}
+
+type MessageReplyOptions struct {
+	Text string `json:"text"`
+	Html string `json:"html"`
+}
+
 type Metadata struct {
 	Headers []*MessageHeader `json:"headers"`
 }
@@ -228,4 +247,19 @@ func (s *MessagesService) Delete(id string) error {
 
 func (s *MessagesService) DeleteAll(server string) error {
 	return s.client.HttpDelete("api/messages?server=" + server)
+}
+
+func (s *MessagesService) Create(server string, messageCreateOptions *MessageCreateOptions) (*Message, error) {
+	result, err := s.client.HttpPost(&Message{}, "api/messages?server="+server, messageCreateOptions)
+	return result.(*Message), err
+}
+
+func (s *MessagesService) Forward(id string, messageForwardOptions *MessageForwardOptions) (*Message, error) {
+	result, err := s.client.HttpPost(&Message{}, "api/messages/"+id+"/forward", messageForwardOptions)
+	return result.(*Message), err
+}
+
+func (s *MessagesService) Reply(id string, messageReplyOptions *MessageReplyOptions) (*Message, error) {
+	result, err := s.client.HttpPost(&Message{}, "api/messages/"+id+"/reply", messageReplyOptions)
+	return result.(*Message), err
 }

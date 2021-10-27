@@ -11,6 +11,7 @@ import (
 
 var client *MailosaurClient
 var server string
+var verifiedDomain string
 var emails []*MessageSummary
 var email *Message
 
@@ -34,7 +35,7 @@ func sendEmail(client *MailosaurClient, server string, sendToAddress string) err
 
 	randomString := getRandomString()
 
-	sendFrom := fmt.Sprintf("%s %s <%s>", randomString, randomString, client.Servers.GenerateEmailAddress(server))
+	sendFrom := fmt.Sprintf("%s %s <%s@%s>", randomString, randomString, randomString, verifiedDomain)
 	toAddress := client.Servers.GenerateEmailAddress(server)
 
 	if len(sendToAddress) != 0 {
