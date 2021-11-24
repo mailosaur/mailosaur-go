@@ -1,7 +1,9 @@
 package mailosaur
 
 import (
+	"encoding/base64"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 	"strings"
@@ -92,7 +94,7 @@ func TestMessageGetById(t *testing.T) {
 }
 
 func TestMessageGetByIdNotFound(t *testing.T) {
-	_, err := client.Messages.GetById("")
+	_, err := client.Messages.GetById("efe907e9-74ed-4113-a3e0-a3d41d914765")
 
 	assert.Error(t, err)
 	assert.IsType(t, &mailosaurError{}, err)
@@ -299,6 +301,42 @@ func TestCreateSendHtml(t *testing.T) {
 	assert.Equal(t, subject, message.Subject)
 }
 
+func TestCreateSendWithAttachment(t *testing.T) {
+
+	result, _ := client.Messages.List(&MessageListParams{Server: server})
+	emails = result.Items
+
+	if verifiedDomain == "mailosaur.net" {
+		t.Skip()
+	}
+
+	subject := "New message with attachment"
+
+	catImage, _ := ioutil.ReadFile("testing/cat.png")
+
+	var attachment = Attachment{
+		FileName:    "cat.png",
+		Content:     base64.StdEncoding.EncodeToString([]byte(catImage)),
+		ContentType: "image/png",
+	}
+
+	var message, _ = client.Messages.Create(server, &MessageCreateOptions{
+		To:          fmt.Sprintf("anything@%s", verifiedDomain),
+		Send:        true,
+		Subject:     subject,
+		Html:        "This is a new email",
+		Attachments: []Attachment{attachment},
+	})
+
+	assert.Equal(t, 1, len(message.Attachments))
+	file1 := message.Attachments[0]
+	assert.True(t, len(file1.Id) != 0)
+	assert.Equal(t, 82138, file1.Length)
+	assert.NotNil(t, file1.Url)
+	assert.Equal(t, "cat.png", file1.FileName)
+	assert.Equal(t, "image/png", file1.ContentType)
+}
+
 func TestForwardText(t *testing.T) {
 	if verifiedDomain == "mailosaur.net" {
 		t.Skip()
@@ -367,6 +405,36 @@ func TestReplyHtml(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, message.Id)
 	assert.Contains(t, message.Html.Body, body)
+}
+
+func TestReplyWithAttachment(t *testing.T) {
+	if verifiedDomain == "mailosaur.net" {
+		t.Skip()
+	}
+
+	body := "<p>Reply with attachment.</p>"
+	targetEmailId := emails[0].Id
+
+	catImage, _ := ioutil.ReadFile("testing/cat.png")
+
+	var attachment = Attachment{
+		FileName:    "cat.png",
+		Content:     base64.StdEncoding.EncodeToString([]byte(catImage)),
+		ContentType: "image/png",
+	}
+
+	var message, _ = client.Messages.Reply(targetEmailId, &MessageReplyOptions{
+		Html:        body,
+		Attachments: []Attachment{attachment},
+	})
+
+	assert.Equal(t, 1, len(message.Attachments))
+	file1 := message.Attachments[0]
+	assert.True(t, len(file1.Id) != 0)
+	assert.Equal(t, 82138, file1.Length)
+	assert.NotNil(t, file1.Url)
+	assert.Equal(t, "cat.png", file1.FileName)
+	assert.Equal(t, "image/png", file1.ContentType)
 }
 
 func validateEmail(t *testing.T, email *Message) {

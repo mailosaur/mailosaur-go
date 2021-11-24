@@ -15,6 +15,7 @@ type Attachment struct {
 	Id          string `json:"id"`
 	ContentType string `json:"contentType"`
 	FileName    string `json:"fileName"`
+	Content     string `json:"content"`
 	ContentId   string `json:"contentId"`
 	Length      int    `json:"length"`
 	Url         string `json:"url"`
@@ -88,11 +89,12 @@ type MessageSummary struct {
 }
 
 type MessageCreateOptions struct {
-	To      string `json:"to"`
-	Send    bool   `json:"send"`
-	Subject string `json:"subject"`
-	Text    string `json:"text"`
-	Html    string `json:"html"`
+	To          string       `json:"to"`
+	Send        bool         `json:"send"`
+	Subject     string       `json:"subject"`
+	Text        string       `json:"text"`
+	Html        string       `json:"html"`
+	Attachments []Attachment `json:"attachments"`
 }
 
 type MessageForwardOptions struct {
@@ -102,8 +104,9 @@ type MessageForwardOptions struct {
 }
 
 type MessageReplyOptions struct {
-	Text string `json:"text"`
-	Html string `json:"html"`
+	Text        string       `json:"text"`
+	Html        string       `json:"html"`
+	Attachments []Attachment `json:"attachments"`
 }
 
 type Metadata struct {
