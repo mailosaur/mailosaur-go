@@ -77,7 +77,6 @@ type MessageListResult struct {
 type MessageSummary struct {
 	Id          string            `json:"id"`
 	Server      string            `json:"server"`
-	Rcpt        []*MessageAddress `json:"rcpt"`
 	From        []*MessageAddress `json:"from"`
 	To          []*MessageAddress `json:"to"`
 	Cc          []*MessageAddress `json:"cc"`
@@ -110,7 +109,10 @@ type MessageReplyOptions struct {
 }
 
 type Metadata struct {
-	Headers []*MessageHeader `json:"headers"`
+	Headers  []*MessageHeader  `json:"headers"`
+	MailFrom string            `json:"mailFrom"`
+	RcptTo   []*MessageAddress `json:"rcptTo"`
+	Ehlo     string            `json:"ehlo"`
 }
 
 type SearchCriteria struct {

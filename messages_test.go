@@ -449,6 +449,9 @@ func validateEmail(t *testing.T, email *Message) {
 	validateAttachmentMetadata(t, email)
 	validateHtml(t, email)
 	validateText(t, email)
+	assert.NotNil(t, email.Metadata.Ehlo)
+	assert.NotNil(t, email.Metadata.MailFrom)
+	assert.Equal(t, 1, len(email.Metadata.RcptTo))
 }
 
 func validateEmailSummary(t *testing.T, email *MessageSummary) {

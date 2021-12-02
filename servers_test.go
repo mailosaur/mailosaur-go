@@ -3,6 +3,7 @@ package mailosaur
 import (
 	"log"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -98,5 +99,5 @@ func TestFailedCreate(t *testing.T) {
 	assert.Equal(t, "Request had one or more invalid parameters.", mErr.Message)
 	assert.Equal(t, "invalid_request", mErr.ErrorType)
 	assert.Equal(t, 400, mErr.HttpStatusCode)
-	assert.Equal(t, "{\"type\":\"ValidationError\",\"messages\":{\"name\":\"Please provide a name for your server\"}}", mErr.HttpResponseBody)
+	assert.True(t, strings.Contains(mErr.HttpResponseBody, "{\"type\":"))
 }
