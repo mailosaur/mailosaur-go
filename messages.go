@@ -1,7 +1,6 @@
 package mailosaur
 
 import (
-	"log"
 	"strconv"
 	"strings"
 	"time"
@@ -211,7 +210,7 @@ func (s *MessagesService) Search(params *MessageSearchParams, criteria *SearchCr
 			n, _ = strconv.Atoi(strings.TrimSpace(v))
 			delayPatternValues = append(delayPatternValues, n)
 			if err != nil {
-				log.Fatal(err)
+				return nil, err
 			}
 		}
 
