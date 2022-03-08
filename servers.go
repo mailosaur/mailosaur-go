@@ -69,7 +69,7 @@ func (s *ServersService) GenerateEmailAddress(id string) string {
 }
 
 func getRandomString() string {
-	var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
+	var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
 
 	s := make([]rune, 8)
 	for i := range s {

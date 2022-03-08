@@ -473,6 +473,11 @@ func validateHtml(t *testing.T, email *Message) {
 	assert.Equal(t, "http://invalid/", email.Html.Links[2].Href)
 	assert.Equal(t, "invalid", email.Html.Links[2].Text)
 
+	// Html.Codes
+	assert.Equal(t, 2, len(email.Html.Codes))
+	assert.Equal(t, "123456", email.Html.Codes[0].Value)
+	assert.Equal(t, "G3H1Y2", email.Html.Codes[1].Value)
+
 	// Html.Images
 	assert.True(t, strings.HasPrefix(email.Html.Images[1].Src, "cid:"))
 	assert.Equal(t, "Inline image 1", email.Html.Images[1].Alt)
@@ -488,6 +493,11 @@ func validateText(t *testing.T, email *Message) {
 	assert.Equal(t, email.Text.Links[0].Href, email.Text.Links[0].Text)
 	assert.Equal(t, "https://mailosaur.com/", email.Text.Links[1].Href)
 	assert.Equal(t, email.Text.Links[1].Href, email.Text.Links[1].Text)
+
+	// Text.Codes
+	assert.Equal(t, 2, len(email.Text.Codes))
+	assert.Equal(t, "654321", email.Text.Codes[0].Value)
+	assert.Equal(t, "5H0Y2", email.Text.Codes[1].Value)
 }
 
 func validateHeaders(_ *testing.T, _ *Message) {

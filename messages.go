@@ -25,6 +25,10 @@ type Image struct {
 	Alt string `json:"alt"`
 }
 
+type Code struct {
+	Value string `json:"value"`
+}
+
 type Link struct {
 	Href string `json:"href"`
 	Text string `json:"text"`
@@ -53,6 +57,7 @@ type MessageAddress struct {
 
 type MessageContent struct {
 	Links  []*Link  `json:"links"`
+	Codes  []*Code  `json:"codes"`
 	Images []*Image `json:"images"`
 	Body   string   `json:"body"`
 }
