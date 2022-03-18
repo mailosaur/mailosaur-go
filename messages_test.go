@@ -134,17 +134,6 @@ func TestSearchBySentFrom(t *testing.T) {
 	assert.Equal(t, targetEmail.Subject, result.Items[0].Subject)
 }
 
-func TestSearchBySentFromInvalidEmail(t *testing.T) {
-	_, err := client.Messages.Search(&MessageSearchParams{
-		Server: server,
-	}, &SearchCriteria{
-		SentFrom: ".not_an_email_address",
-	})
-
-	assert.Error(t, err)
-	assert.IsType(t, &mailosaurError{}, err)
-}
-
 func TestSearchBySentTo(t *testing.T) {
 	targetEmail := emails[1]
 
@@ -157,17 +146,6 @@ func TestSearchBySentTo(t *testing.T) {
 	assert.Equal(t, 1, len(result.Items))
 	assert.Equal(t, targetEmail.To[0].Email, result.Items[0].To[0].Email)
 	assert.Equal(t, targetEmail.Subject, result.Items[0].Subject)
-}
-
-func TestSearchBySentToInvalidEmail(t *testing.T) {
-	_, err := client.Messages.Search(&MessageSearchParams{
-		Server: server,
-	}, &SearchCriteria{
-		SentTo: ".not_an_email_address",
-	})
-
-	assert.Error(t, err)
-	assert.IsType(t, &mailosaurError{}, err)
 }
 
 func TestSearchByBody(t *testing.T) {
