@@ -22,6 +22,7 @@ type MailosaurClient struct {
 	Analysis *AnalysisService
 	Files    *FilesService
 	Usage    *UsageService
+	Devices  *DevicesService
 }
 
 type mailosaurError struct {
@@ -52,6 +53,7 @@ func NewWithClient(apiKey string, httpClient *http.Client) *MailosaurClient {
 	c.Analysis = &AnalysisService{client: c}
 	c.Files = &FilesService{client: c}
 	c.Usage = &UsageService{client: c}
+	c.Devices = &DevicesService{client: c}
 
 	return c
 }
