@@ -44,13 +44,13 @@ func TestDevicesCrud(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, 6, len(otpResult.Code))
 
-	resultBefore, _ := client.Devices.List()
-	assert.Equal(t, 1, len(resultBefore.Items))
+	before, _ := client.Devices.List()
+	assert.True(t, contains_device(before.Items, createdDevice.Id))
 
 	client.Devices.Delete(createdDevice.Id)
 
-	resultAfter, _ := client.Devices.List()
-	assert.Equal(t, 0, len(resultAfter.Items))
+	after, _ := client.Devices.List()
+	assert.False(t, contains_device(after.Items, createdDevice.Id))
 }
 
 func TestOtpViaSharedSecret(t *testing.T) {
@@ -59,4 +59,13 @@ func TestOtpViaSharedSecret(t *testing.T) {
 	otpResult, err := client.Devices.Otp(sharedSecret)
 	assert.NoError(t, err)
 	assert.Equal(t, 6, len(otpResult.Code))
+}
+
+func contains_device(list []*Device, id string) bool {
+	for _, x := range list {
+		if id == x.Id {
+			return true
+		}
+	}
+	return false
 }
