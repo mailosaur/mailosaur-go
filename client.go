@@ -32,6 +32,19 @@ type mailosaurError struct {
 	HttpResponseBody string
 }
 
+type ErrorDetail struct {
+	Description string `json:"description"`
+}
+
+type Error struct {
+	Field  string        `json:"field"`
+	Detail []ErrorDetail `json:"detail"`
+}
+
+type ErrorResponse struct {
+	Errors []Error `json:"errors"`
+}
+
 func (e *mailosaurError) Error() string {
 	return e.Message
 }
@@ -99,9 +112,23 @@ func (c *MailosaurClient) executeRequestWithDelayHeader(result interface{}, meth
 
 	if resp.StatusCode != expectedStatus {
 		err := &mailosaurError{}
+		err.HttpStatusCode = resp.StatusCode
+
+		var bodyBytes []byte
+		if err.HttpStatusCode != 204 {
+			bodyBytes, _ = ioutil.ReadAll(resp.Body)
+			err.HttpResponseBody = string(bodyBytes)
+		}
+
+		message := ""
 		switch resp.StatusCode {
 		case 400:
-			err.Message = "Request had one or more invalid parameters."
+			var jsonResult ErrorResponse
+			json.Unmarshal(bodyBytes, &jsonResult)
+			for _, e := range jsonResult.Errors {
+				message += fmt.Sprintf("(%s) %s\r\n", e.Field, e.Detail[0].Description)
+			}
+			err.Message = message
 			err.ErrorType = "invalid_request"
 		case 401:
 			err.Message = "Authentication failed, check your API key."
@@ -110,18 +137,12 @@ func (c *MailosaurClient) executeRequestWithDelayHeader(result interface{}, meth
 			err.Message = "Insufficient permission to perform that task."
 			err.ErrorType = "permission_error"
 		case 404:
-			err.Message = "Request did not find any matching resources."
+			err.Message = "Not found, check input parameters."
 			err.ErrorType = "invalid_request"
 		default:
 			err.Message = "An API error occurred, see httpResponse for further information."
 			err.ErrorType = "api_error"
 			break
-		}
-
-		err.HttpStatusCode = resp.StatusCode
-		if err.HttpStatusCode != 204 {
-			bodyBytes, _ := ioutil.ReadAll(resp.Body)
-			err.HttpResponseBody = string(bodyBytes)
 		}
 
 		return result, "", err
