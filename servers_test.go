@@ -96,7 +96,7 @@ func TestFailedCreate(t *testing.T) {
 	assert.Error(t, mErr)
 	assert.IsType(t, &mailosaurError{}, mErr)
 
-	assert.Equal(t, "(name) Please provide a name for your server\r\n", mErr.Message)
+	assert.Equal(t, "(name) Servers need a name\r\n", mErr.Message)
 	assert.Equal(t, "invalid_request", mErr.ErrorType)
 	assert.Equal(t, 400, mErr.HttpStatusCode)
 	assert.True(t, strings.Contains(mErr.HttpResponseBody, "{\"type\":"))

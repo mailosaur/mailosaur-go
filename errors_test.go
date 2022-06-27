@@ -30,5 +30,5 @@ func TestBadRequest(t *testing.T) {
 	_, err := client.Servers.Create(serverCreateOptions)
 
 	assert.Error(t, err)
-	assert.Equal(t, "(name) Please provide a name for your server\r\n", err.Error())
+	assert.Equal(t, "(name) Servers need a name\r\n", err.Error())
 }
