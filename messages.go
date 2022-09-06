@@ -93,6 +93,7 @@ type MessageSummary struct {
 
 type MessageCreateOptions struct {
 	To          string       `json:"to"`
+	From        string       `json:"from"`
 	Send        bool         `json:"send"`
 	Subject     string       `json:"subject"`
 	Text        string       `json:"text"`
