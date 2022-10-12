@@ -423,6 +423,7 @@ func validateEmail(t *testing.T, email *Message) {
 		Bcc:      email.Bcc,
 		Subject:  email.Subject,
 		Received: email.Received,
+		Type:     email.Type,
 	})
 	validateAttachmentMetadata(t, email)
 	validateHtml(t, email)
