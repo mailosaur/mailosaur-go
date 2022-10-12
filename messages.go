@@ -36,6 +36,7 @@ type Link struct {
 
 type Message struct {
 	Id          string            `json:"id"`
+	Type        string            `json:"type"`
 	From        []*MessageAddress `json:"from"`
 	To          []*MessageAddress `json:"to"`
 	Cc          []*MessageAddress `json:"cc"`
@@ -80,6 +81,7 @@ type MessageListResult struct {
 
 type MessageSummary struct {
 	Id          string            `json:"id"`
+	Type        string            `json:"type"`
 	Server      string            `json:"server"`
 	From        []*MessageAddress `json:"from"`
 	To          []*MessageAddress `json:"to"`

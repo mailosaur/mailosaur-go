@@ -483,6 +483,7 @@ func validateHeaders(_ *testing.T, _ *Message) {
 }
 
 func validateMetadata(t *testing.T, email *MessageSummary) {
+	assert.Equal(t, "Email", email.Type)
 	assert.Equal(t, 1, len(email.From))
 	assert.Equal(t, 1, len(email.To))
 
