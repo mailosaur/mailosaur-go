@@ -73,6 +73,7 @@ type MessageListParams struct {
 	ReceivedAfter time.Time
 	Page          int
 	ItemsPerPage  int
+	Dir           string
 }
 
 type MessageListResult struct {
@@ -137,6 +138,7 @@ type MessageSearchParams struct {
 	ItemsPerPage   int
 	Timeout        int
 	ErrorOnTimeout *bool
+	Dir            string
 }
 
 func (s *MessagesService) List(params *MessageListParams) (*MessageListResult, error) {
@@ -145,6 +147,7 @@ func (s *MessagesService) List(params *MessageListParams) (*MessageListResult, e
 		params.Page,
 		params.ItemsPerPage,
 		params.ReceivedAfter,
+		params.Dir,
 	)
 
 	result, err := s.client.HttpGet(&MessageListResult{}, u)
@@ -181,6 +184,7 @@ func (s *MessagesService) Search(params *MessageSearchParams, criteria *SearchCr
 		params.Page,
 		params.ItemsPerPage,
 		params.ReceivedAfter,
+		params.Dir,
 	)
 
 	// Default value for Match

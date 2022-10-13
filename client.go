@@ -181,7 +181,7 @@ func (c *MailosaurClient) HttpDelete(path string) error {
 	return err
 }
 
-func buildPagePath(path string, page int, itemsPerPage int, receivedAfter time.Time) string {
+func buildPagePath(path string, page int, itemsPerPage int, receivedAfter time.Time, dir string) string {
 	if page > 0 {
 		path += "&page=" + fmt.Sprint(page)
 	}
@@ -192,6 +192,10 @@ func buildPagePath(path string, page int, itemsPerPage int, receivedAfter time.T
 
 	if !receivedAfter.IsZero() {
 		path += "&receivedAfter=" + url.QueryEscape(receivedAfter.Format(time.RFC3339))
+	}
+
+	if len(dir) > 0 {
+		path += "&dir=" + dir
 	}
 
 	return path
