@@ -141,6 +141,25 @@ type MessageSearchParams struct {
 	Dir            string
 }
 
+type Preview struct {
+	Id            string `json:"id"`
+	EmailClient   string `json:"emailClient"`
+	DisableImages bool   `json:"disableImages"`
+}
+
+type PreviewListResult struct {
+	Items []*Preview `json:"items"`
+}
+
+type PreviewRequest struct {
+	EmailClient   string `json:"emailClient"`
+	DisableImages bool   `json:"disableImages"`
+}
+
+type PreviewRequestOptions struct {
+	Previews []*PreviewRequest `json:"previews"`
+}
+
 func (s *MessagesService) List(params *MessageListParams) (*MessageListResult, error) {
 	u := buildPagePath(
 		"api/messages?server="+params.Server,
@@ -278,4 +297,9 @@ func (s *MessagesService) Forward(id string, messageForwardOptions *MessageForwa
 func (s *MessagesService) Reply(id string, messageReplyOptions *MessageReplyOptions) (*Message, error) {
 	result, err := s.client.HttpPost(&Message{}, "api/messages/"+id+"/reply", messageReplyOptions)
 	return result.(*Message), err
+}
+
+func (s *MessagesService) GeneratePreviews(id string, options *PreviewRequestOptions) (*PreviewListResult, error) {
+	result, err := s.client.HttpPost(&PreviewListResult{}, "api/messages/"+id+"/previews", options)
+	return result.(*PreviewListResult), err
 }
