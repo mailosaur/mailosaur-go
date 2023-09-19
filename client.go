@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"time"
@@ -118,7 +117,7 @@ func (c *MailosaurClient) executeRequestWithDelayHeader(result interface{}, meth
 
 		var bodyBytes []byte
 		if err.HttpStatusCode != 204 {
-			bodyBytes, _ = ioutil.ReadAll(resp.Body)
+			bodyBytes, _ = io.ReadAll(resp.Body)
 			err.HttpResponseBody = string(bodyBytes)
 		}
 
@@ -152,7 +151,7 @@ func (c *MailosaurClient) executeRequestWithDelayHeader(result interface{}, meth
 
 	// If no result type is being marshalled, just return the bytes
 	if result == nil {
-		bodyBytes, err := ioutil.ReadAll(resp.Body)
+		bodyBytes, err := io.ReadAll(resp.Body)
 		return bodyBytes, resp.Header.Get("x-ms-delay"), err
 	}
 

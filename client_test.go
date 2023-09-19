@@ -3,7 +3,6 @@ package mailosaur
 import (
 	"encoding/base64"
 	"fmt"
-	"io/ioutil"
 	"net/smtp"
 	"os"
 	"strings"
@@ -49,13 +48,13 @@ func sendEmail(client *MailosaurClient, server string, sendToAddress string) err
 
 	delimeter := "--==_mimepart_" + randomString
 
-	catImage, _ := ioutil.ReadFile("testing/cat.png")
-	dogImage, _ := ioutil.ReadFile("testing/dog.png")
+	catImage, _ := os.ReadFile("testing/cat.png")
+	dogImage, _ := os.ReadFile("testing/dog.png")
 
-	htmlFile, _ := ioutil.ReadFile("testing/testEmail.html")
+	htmlFile, _ := os.ReadFile("testing/testEmail.html")
 	htmlContent := r.Replace(string(htmlFile))
 
-	textFile, _ := ioutil.ReadFile("testing/testEmail.txt")
+	textFile, _ := os.ReadFile("testing/testEmail.txt")
 	textContent := r.Replace(string(textFile))
 
 	c, err := smtp.Dial(host + ":" + port)

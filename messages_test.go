@@ -3,7 +3,6 @@ package mailosaur
 import (
 	"encoding/base64"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"strings"
@@ -290,7 +289,7 @@ func TestCreateSendWithAttachment(t *testing.T) {
 
 	subject := "New message with attachment"
 
-	catImage, _ := ioutil.ReadFile("testing/cat.png")
+	catImage, _ := os.ReadFile("testing/cat.png")
 
 	var attachment = Attachment{
 		FileName:    "cat.png",
@@ -393,7 +392,7 @@ func TestReplyWithAttachment(t *testing.T) {
 	body := "<p>Reply with attachment.</p>"
 	targetEmailId := emails[0].Id
 
-	catImage, _ := ioutil.ReadFile("testing/cat.png")
+	catImage, _ := os.ReadFile("testing/cat.png")
 
 	var attachment = Attachment{
 		FileName:    "cat.png",

@@ -11,13 +11,13 @@ type MessagesService struct {
 }
 
 type Attachment struct {
-	Id          string `json:"id"`
+	Id          string `json:"id,omitempty"`
 	ContentType string `json:"contentType"`
 	FileName    string `json:"fileName"`
 	Content     string `json:"content"`
-	ContentId   string `json:"contentId"`
-	Length      int    `json:"length"`
-	Url         string `json:"url"`
+	ContentId   string `json:"contentId,omitempty"`
+	Length      int    `json:"length,omitempty"`
+	Url         string `json:"url,omitempty"`
 }
 
 type Image struct {
