@@ -1,6 +1,8 @@
 package mailosaur
 
 import (
+	"encoding/json"
+	"fmt"
 	"strconv"
 	"strings"
 	"time"
@@ -260,8 +262,9 @@ func (s *MessagesService) Search(params *MessageSearchParams, criteria *SearchCr
 				return result.(*MessageListResult), nil
 			}
 
+			criteriaJson, _ := json.Marshal(criteria)
 			err := &mailosaurError{
-				Message:   "No matching messages found in time. By default, only messages received in the last hour are checked (use receivedAfter to override this).",
+				Message:   "No matching messages found in time. By default, only messages received in the last hour are checked (use receivedAfter to override this). The search criteria used for this query was ["+string(criteriaJson)+"] which timed out after "+fmt.Sprint(params.Timeout)+"s",
 				ErrorType: "search_timeout",
 			}
 			return nil, err
