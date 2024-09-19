@@ -34,13 +34,14 @@ func sendEmail(client *MailosaurClient, server string, sendToAddress string) err
 
 	randomString := getRandomString()
 
-	sendFrom := fmt.Sprintf("%s %s <%s@%s>", randomString, randomString, randomString, verifiedDomain)
+	fromAddress := fmt.Sprintf("%s@%s", randomString, verifiedDomain)
 	toAddress := client.Servers.GenerateEmailAddress(server)
 
 	if len(sendToAddress) != 0 {
 		toAddress = sendToAddress
 	}
 
+	sendFrom := fmt.Sprintf("%s %s <%s>", randomString, randomString, fromAddress)
 	sendTo := fmt.Sprintf("%s %s <%s>", randomString, randomString, toAddress)
 	subject := randomString + " subject"
 
@@ -62,7 +63,7 @@ func sendEmail(client *MailosaurClient, server string, sendToAddress string) err
 		return err
 	}
 	defer c.Close()
-	if err = c.Mail(sendFrom); err != nil {
+	if err = c.Mail(fromAddress); err != nil {
 		return err
 	}
 
