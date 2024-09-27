@@ -227,6 +227,43 @@ func TestSpamAnalysis(t *testing.T) {
 	}
 }
 
+func TestDeliverability(t *testing.T) {
+	targetId := emails[0].Id
+	result, _ := client.Analysis.Deliverability(targetId)
+
+	assert.NotNil(t, result)
+
+	assert.NotNil(t, result.Spf)
+
+	assert.NotNil(t, result.Dkim)
+	for _, dkim := range result.Dkim {
+		assert.NotNil(t, dkim)
+	}
+
+	assert.NotNil(t, result.Dmarc)
+
+	assert.NotNil(t, result.BlockLists)
+	assert.True(t, len(result.BlockLists) != 0)
+	for _, blockList := range result.BlockLists {
+		assert.NotNil(t, blockList)
+		assert.NotNil(t, blockList.Id)
+		assert.NotNil(t, blockList.Name)
+	}
+
+	assert.NotNil(t, result.Content)
+
+	assert.NotNil(t, result.DnsRecords)
+	assert.NotNil(t, result.DnsRecords.A)
+	assert.NotNil(t, result.DnsRecords.Mx)
+	assert.NotNil(t, result.DnsRecords.Ptr)
+
+	assert.NotNil(t, result.SpamAssassin)
+	for _, rule := range result.SpamAssassin.Rules {
+		assert.True(t, len(rule.Rule) != 0)
+		assert.True(t, len(rule.Description) != 0)
+	}
+}
+
 func TestDeleteMessage(t *testing.T) {
 	targetEmailId := emails[4].Id
 
