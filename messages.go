@@ -98,6 +98,7 @@ type MessageSummary struct {
 
 type MessageCreateOptions struct {
 	To          string       `json:"to"`
+	Cc          string       `json:"cc"`
 	From        string       `json:"from"`
 	Send        bool         `json:"send"`
 	Subject     string       `json:"subject"`
@@ -108,11 +109,13 @@ type MessageCreateOptions struct {
 
 type MessageForwardOptions struct {
 	To   string `json:"to"`
+	Cc   string `json:"cc"`
 	Text string `json:"text"`
 	Html string `json:"html"`
 }
 
 type MessageReplyOptions struct {
+	Cc          string       `json:"cc"`
 	Text        string       `json:"text"`
 	Html        string       `json:"html"`
 	Attachments []Attachment `json:"attachments"`
@@ -264,7 +267,7 @@ func (s *MessagesService) Search(params *MessageSearchParams, criteria *SearchCr
 
 			criteriaJson, _ := json.Marshal(criteria)
 			err := &mailosaurError{
-				Message:   "No matching messages found in time. By default, only messages received in the last hour are checked (use receivedAfter to override this). The search criteria used for this query was ["+string(criteriaJson)+"] which timed out after "+fmt.Sprint(params.Timeout)+"s",
+				Message:   "No matching messages found in time. By default, only messages received in the last hour are checked (use receivedAfter to override this). The search criteria used for this query was [" + string(criteriaJson) + "] which timed out after " + fmt.Sprint(params.Timeout) + "s",
 				ErrorType: "search_timeout",
 			}
 			return nil, err

@@ -315,6 +315,29 @@ func TestCreateSendHtml(t *testing.T) {
 	assert.Equal(t, subject, message.Subject)
 }
 
+func TestCreateSendWithCc(t *testing.T) {
+	if verifiedDomain == "mailosaur.net" {
+		t.Skip()
+	}
+
+	subject := "CC message"
+	ccRecipient := fmt.Sprintf("someoneelse@%s", verifiedDomain)
+
+	var message, err = client.Messages.Create(server, &MessageCreateOptions{
+		To:      fmt.Sprintf("anything@%s", verifiedDomain),
+		Cc:      ccRecipient,
+		Send:    true,
+		Subject: subject,
+		Html:    "This is a new email",
+	})
+
+	assert.NoError(t, err)
+	assert.NotNil(t, message.Id)
+	assert.Equal(t, subject, message.Subject)
+	assert.Equal(t, 1, len(message.Cc))
+	assert.Equal(t, ccRecipient, message.Cc[0].Email)
+}
+
 func TestCreateSendWithAttachment(t *testing.T) {
 
 	result, _ := client.Messages.List(&MessageListParams{Server: server})
@@ -387,6 +410,28 @@ func TestForwardHtml(t *testing.T) {
 	assert.Contains(t, message.Html.Body, body)
 }
 
+func TestForwardWithCc(t *testing.T) {
+	if verifiedDomain == "mailosaur.net" {
+		t.Skip()
+	}
+
+	body := "<p>Forwarded <strong>HTML</strong> message.</p>"
+	targetEmailId := emails[0].Id
+	ccRecipient := fmt.Sprintf("someoneelse@%s", verifiedDomain)
+
+	var message, err = client.Messages.Forward(targetEmailId, &MessageForwardOptions{
+		To:   fmt.Sprintf("forwardcc@%s", verifiedDomain),
+		Cc:   ccRecipient,
+		Html: body,
+	})
+
+	assert.NoError(t, err)
+	assert.NotNil(t, message.Id)
+	assert.Contains(t, message.Html.Body, body)
+	assert.Equal(t, 1, len(message.Cc))
+	assert.Equal(t, ccRecipient, message.Cc[0].Email)
+}
+
 func TestReplyText(t *testing.T) {
 	if verifiedDomain == "mailosaur.net" {
 		t.Skip()
@@ -419,6 +464,27 @@ func TestReplyHtml(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, message.Id)
 	assert.Contains(t, message.Html.Body, body)
+}
+
+func TestReplyWithCc(t *testing.T) {
+	if verifiedDomain == "mailosaur.net" {
+		t.Skip()
+	}
+
+	body := "<p>Reply <strong>HTML</strong> message.</p>"
+	targetEmailId := emails[0].Id
+	ccRecipient := fmt.Sprintf("someoneelse@%s", verifiedDomain)
+
+	var message, err = client.Messages.Reply(targetEmailId, &MessageReplyOptions{
+		Cc:   ccRecipient,
+		Html: body,
+	})
+
+	assert.NoError(t, err)
+	assert.NotNil(t, message.Id)
+	assert.Contains(t, message.Html.Body, body)
+	assert.Equal(t, 1, len(message.Cc))
+	assert.Equal(t, ccRecipient, message.Cc[0].Email)
 }
 
 func TestReplyWithAttachment(t *testing.T) {
