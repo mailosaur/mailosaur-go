@@ -4,21 +4,16 @@ type PreviewsService struct {
 	client *MailosaurClient
 }
 
-type PreviewPreviewEmailClient struct {
-	Id               string `json:"id"`
-	Name             string `json:"name"`
-	PlatformGroup    string `json:"platformGroup"`
-	PlatformType     string `json:"platformType"`
-	PlatformVersion  string `json:"platformVersion"`
-	CanDisableImages bool   `json:"canDisableImages"`
-	Status           string `json:"status"`
+type EmailClient struct {
+	Label string `json:"label"`
+	Name  string `json:"name"`
 }
 
-type PreviewEmailClientListResult struct {
-	Items []*PreviewPreviewEmailClient `json:"items"`
+type EmailClientListResult struct {
+	Items []*EmailClient `json:"items"`
 }
 
-func (s *PreviewsService) ListEmailClients() (*PreviewEmailClientListResult, error) {
-	result, err := s.client.HttpGet(&PreviewEmailClientListResult{}, "api/previews/clients")
-	return result.(*PreviewEmailClientListResult), err
+func (s *PreviewsService) ListEmailClients() (*EmailClientListResult, error) {
+	result, err := s.client.HttpGet(&EmailClientListResult{}, "api/screenshots/clients")
+	return result.(*EmailClientListResult), err
 }

@@ -22,7 +22,8 @@ func init() {
 }
 
 func TestUnauthorized(t *testing.T) {
-	client := New(os.Getenv("invalid_key"), baseUrl)
+	client := New(os.Getenv("invalid_key"))
+	client.baseUrl = baseUrl
 	_, err := client.Servers.List()
 
 	assert.Error(t, err)

@@ -14,7 +14,7 @@ func init() {
 	baseUrl := os.Getenv("MAILOSAUR_BASE_URL")
 	server = os.Getenv("MAILOSAUR_SERVER")
 
-	if len(apiKey) == 0 {
+	if len(apiKey) == 0 || len(server) == 0 {
 		log.Fatal("Missing necessary environment variables - refer to README.md")
 	}
 
@@ -34,10 +34,6 @@ func TestListEmailClients(t *testing.T) {
 }
 
 func TestGenerateEmailPreviews(t *testing.T) {
-	if len(server) == 0 {
-		t.Skip()
-	}
-
 	randomString := getRandomString()
 	host := os.Getenv("MAILOSAUR_SMTP_HOST")
 	if len(host) == 0 {
@@ -54,8 +50,7 @@ func TestGenerateEmailPreviews(t *testing.T) {
 		SentTo: testEmailAddress,
 	})
 
-	request := &PreviewRequest{EmailClient: "OL2021"}
-	options := &PreviewRequestOptions{Previews: []*PreviewRequest{request}}
+	options := &PreviewRequestOptions{EmailClients: []string{"iphone-16plus-applemail-lightmode-portrait"}}
 
 	result, _ := client.Messages.GeneratePreviews(email.Id, options)
 	assert.True(t, len(result.Items) > 0)

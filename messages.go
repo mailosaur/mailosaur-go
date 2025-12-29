@@ -153,13 +153,8 @@ type PreviewListResult struct {
 	Items []*Preview `json:"items"`
 }
 
-type PreviewRequest struct {
-	EmailClient   string `json:"emailClient"`
-	DisableImages bool   `json:"disableImages"`
-}
-
 type PreviewRequestOptions struct {
-	Previews []*PreviewRequest `json:"previews"`
+	EmailClients []string `json:"emailClients"`
 }
 
 func (s *MessagesService) List(params *MessageListParams) (*MessageListResult, error) {
@@ -242,9 +237,6 @@ func (s *MessagesService) Search(params *MessageSearchParams, criteria *SearchCr
 			var n int
 			n, _ = strconv.Atoi(strings.TrimSpace(v))
 			delayPatternValues = append(delayPatternValues, n)
-			if err != nil {
-				return nil, err
-			}
 		}
 
 		var delay int
@@ -257,7 +249,7 @@ func (s *MessagesService) Search(params *MessageSearchParams, criteria *SearchCr
 		pollCount++
 
 		// Stop if timeout will be exceeded
-		if time.Now().Sub(startTime).Seconds()+float64(delay) > float64(params.Timeout) {
+		if time.Since(startTime).Seconds()+float64(delay) > float64(params.Timeout) {
 			if *params.ErrorOnTimeout == false {
 				return result.(*MessageListResult), nil
 			}
@@ -303,6 +295,6 @@ func (s *MessagesService) Reply(id string, messageReplyOptions *MessageReplyOpti
 }
 
 func (s *MessagesService) GeneratePreviews(id string, options *PreviewRequestOptions) (*PreviewListResult, error) {
-	result, err := s.client.HttpPost(&PreviewListResult{}, "api/messages/"+id+"/previews", options)
+	result, err := s.client.HttpPost(&PreviewListResult{}, "api/messages/"+id+"/screenshots", options)
 	return result.(*PreviewListResult), err
 }
