@@ -17,7 +17,7 @@ func init() {
 	}
 
 	if len(baseUrl) == 0 {
-		baseUrl = "https://next.mailosaur.com/"
+		baseUrl = "https://mailosaur.com/"
 	}
 
 	client = New(apiKey)

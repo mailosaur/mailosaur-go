@@ -13,6 +13,8 @@ var server string
 var verifiedDomain string
 var emails []*MessageSummary
 var email *Message
+var apiKey string
+var baseUrl string
 
 func sendEmails(client *MailosaurClient, server string, quantity int) {
 	for i := 0; i < quantity; i++ {
