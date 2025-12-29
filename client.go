@@ -58,7 +58,7 @@ func NewWithClient(apiKey string, httpClient *http.Client) *MailosaurClient {
 		baseUrl:    "https://mailosaur.com/",
 		apiKey:     apiKey,
 		httpClient: httpClient,
-		userAgent:  "mailosaur-go/1.0.0",
+		userAgent:  "mailosaur-go/2.0.0",
 	}
 
 	c.Servers = &ServersService{client: c}
@@ -140,10 +140,12 @@ func (c *MailosaurClient) executeRequestWithDelayHeader(result interface{}, meth
 		case 404:
 			err.Message = "Not found, check input parameters."
 			err.ErrorType = "invalid_request"
+		case 410:
+			err.Message = "Permanently expired or deleted."
+			err.ErrorType = "gone"
 		default:
 			err.Message = "An API error occurred, see httpResponse for further information."
 			err.ErrorType = "api_error"
-			break
 		}
 
 		return result, "", err
