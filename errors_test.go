@@ -1,14 +1,28 @@
 package mailosaur
 
 import (
+	"log"
 	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
+func init() {
+	apiKey = os.Getenv("MAILOSAUR_API_KEY")
+	baseUrl = os.Getenv("MAILOSAUR_BASE_URL")
+
+	if len(apiKey) == 0 {
+		log.Fatal("Missing necessary environment variables - refer to README.md")
+	}
+
+	if len(baseUrl) == 0 {
+		baseUrl = "https://mailosaur.com/"
+	}
+}
+
 func TestUnauthorized(t *testing.T) {
-	client := New(os.Getenv("invalid_key"))
+	client := New(os.Getenv("invalid_key"), baseUrl)
 	_, err := client.Servers.List()
 
 	assert.Error(t, err)
