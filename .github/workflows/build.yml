@@ -16,12 +16,18 @@ permissions:
 
 jobs:
   build:
+    name: Build (${{ matrix.environment }})
     runs-on: ${{ vars.LINUX }}
     timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        environment: [live, next]
 
     env:
-      MAILOSAUR_BASE_URL: https://mailosaur.com/
-      MAILOSAUR_SMTP_HOST: mailosaur.net
+      MAILOSAUR_BASE_URL: ${{ matrix.environment == 'live' && 'https://mailosaur.com/' || 'https://next.mailosaur.com/' }}
+      MAILOSAUR_SMTP_HOST: ${{ matrix.environment == 'live' && 'mailosaur.net' || 'mailosaur.email' }}
       MAILOSAUR_SMTP_PORT: 2525
       MAILOSAUR_API_KEY: ${{ secrets.MAILOSAUR_API_KEY }}
       MAILOSAUR_SERVER: ${{ secrets.MAILOSAUR_SERVER }}
@@ -30,55 +36,27 @@ jobs:
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
-      - name: Checkout custom actions
-        uses: actions/checkout@v4
-        with:
-          repository: mailosaur/actions
-          token: ${{ secrets.CUSTOM_ACTIONS_TOKEN }}
-          path: .github/actions
       - name: Setup Go
         uses: actions/setup-go@v2
         with:
-          go-version: 1.16.0
+          go-version: ${{ vars.GO_VERSION }}
       - name: Test
         run: go test -v
-      - name: Send notifications
-        if: ${{ always() }}
-        uses: ./.github/actions/notify
-        with:
-          webhook-url: ${{ secrets.NOTIFICATION_URL }}
 
-  build-next:
-    if: ${{ always() }}
+  notify:
+    name: Notify
     needs: build
+    if: ${{ always() }}
     runs-on: ${{ vars.LINUX }}
-    timeout-minutes: 10
-
-    env:
-      MAILOSAUR_BASE_URL: https://next.mailosaur.com/
-      MAILOSAUR_SMTP_HOST: mailosaur.email
-      MAILOSAUR_SMTP_PORT: 2525
-      MAILOSAUR_API_KEY: ${{ secrets.MAILOSAUR_API_KEY }}
-      MAILOSAUR_SERVER: ${{ secrets.MAILOSAUR_SERVER }}
-      MAILOSAUR_VERIFIED_DOMAIN: ${{ secrets.MAILOSAUR_VERIFIED_DOMAIN }}
-
     steps:
-      - name: Checkout source code
-        uses: actions/checkout@v4
       - name: Checkout custom actions
         uses: actions/checkout@v4
         with:
           repository: mailosaur/actions
           token: ${{ secrets.CUSTOM_ACTIONS_TOKEN }}
           path: .github/actions
-      - name: Setup Go
-        uses: actions/setup-go@v2
-        with:
-          go-version: 1.16.0
-      - name: Test
-        run: go test -v
       - name: Send notifications
-        if: ${{ always() }}
         uses: ./.github/actions/notify
         with:
           webhook-url: ${{ secrets.NOTIFICATION_URL }}
+          data: '{"matrixBuildResult": "${{ needs.build.result }}"}'
