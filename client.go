@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"os"
 	"time"
 )
 
@@ -49,8 +50,14 @@ func (e *mailosaurError) Error() string {
 	return e.Message
 }
 
-func New(apiKey string) *MailosaurClient {
-	return NewWithClient(apiKey, &http.Client{Timeout: time.Minute})
+func New(apiKey ...string) *MailosaurClient {
+	resolvedKey := ""
+	if len(apiKey) > 0 && len(apiKey[0]) > 0 {
+		resolvedKey = apiKey[0]
+	} else {
+		resolvedKey = os.Getenv("MAILOSAUR_API_KEY")
+	}
+	return NewWithClient(resolvedKey, &http.Client{Timeout: time.Minute})
 }
 
 func NewWithClient(apiKey string, httpClient *http.Client) *MailosaurClient {

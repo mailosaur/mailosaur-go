@@ -13,7 +13,6 @@ import (
 )
 
 func init() {
-	apiKey := os.Getenv("MAILOSAUR_API_KEY")
 	baseUrl := os.Getenv("MAILOSAUR_BASE_URL")
 	server = os.Getenv("MAILOSAUR_SERVER")
 	verifiedDomain = os.Getenv("MAILOSAUR_VERIFIED_DOMAIN")
@@ -22,7 +21,7 @@ func init() {
 		verifiedDomain = "mailosaur.net"
 	}
 
-	if len(apiKey) == 0 || len(server) == 0 {
+	if len(server) == 0 {
 		log.Fatal("Missing necessary environment variables - refer to README.md")
 	}
 
@@ -30,7 +29,7 @@ func init() {
 		baseUrl = "https://mailosaur.com/"
 	}
 
-	client = New(apiKey)
+	client = New()
 	client.baseUrl = baseUrl
 
 	client.Messages.DeleteAll(server)
