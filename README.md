@@ -8,6 +8,20 @@ Mailosaur lets you automate email and SMS tests as part of software development 
 
 ## Get Started
 
+This guide provides several key sections:
+
+- [Mailosaur - Go library · ](#mailosaur---go-library--)
+  - [Get Started](#get-started)
+    - [Installation](#installation)
+    - [Set your API key](#set-your-api-key)
+    - [Create your code](#create-your-code)
+    - [API Reference](#api-reference)
+  - [Creating an account](#creating-an-account)
+  - [Test email addresses with Mailosaur](#test-email-addresses-with-mailosaur)
+  - [Usage](#usage)
+  - [Development](#development)
+  - [Contacting us](#contacting-us)
+
 You can find the full [Mailosaur documentation](https://mailosaur.com/docs/) on the website.
 
 If you get stuck, just contact us at support@mailosaur.com.
@@ -30,6 +44,26 @@ Alternatively, you can also `go get` the package into your project:
 
 ```sh
 go get -u github.com/mailosaur/mailosaur-go
+```
+
+### Set your API key
+
+Get your API key from the Mailosaur Dashboard and set it as an environment variable:
+
+```sh
+export MAILOSAUR_API_KEY='your-api-key-here'
+```
+
+### Create your code
+
+Now import the library and create a client:
+
+```golang
+import (
+    "github.com/mailosaur/mailosaur-go"
+)
+
+m := mailosaur.New()
 ```
 
 ### API Reference
@@ -79,12 +113,10 @@ import (
 )
 
 func TestExample(t *testing.T) {
-  // Available in the API tab of a server
-  apiKey := "YOUR_API_KEY";
   serverId := "SERVER_ID";
   serverDomain := "SERVER_DOMAIN";
 
-  m := mailosaur.New(apiKey);
+  m := mailosaur.New();
 
   params := &mailosaur.MessageSearchParams {
     Server: serverId,

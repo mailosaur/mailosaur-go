@@ -1,7 +1,6 @@
 package mailosaur
 
 import (
-	"log"
 	"os"
 	"testing"
 
@@ -9,18 +8,13 @@ import (
 )
 
 func init() {
-	apiKey := os.Getenv("MAILOSAUR_API_KEY")
 	baseUrl := os.Getenv("MAILOSAUR_BASE_URL")
-
-	if len(apiKey) == 0 {
-		log.Fatal("Missing necessary environment variables - refer to README.md")
-	}
 
 	if len(baseUrl) == 0 {
 		baseUrl = "https://mailosaur.com/"
 	}
 
-	client = New(apiKey)
+	client = New()
 	client.baseUrl = baseUrl
 }
 

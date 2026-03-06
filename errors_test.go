@@ -1,7 +1,6 @@
 package mailosaur
 
 import (
-	"log"
 	"os"
 	"testing"
 
@@ -9,12 +8,7 @@ import (
 )
 
 func init() {
-	apiKey = os.Getenv("MAILOSAUR_API_KEY")
 	baseUrl = os.Getenv("MAILOSAUR_BASE_URL")
-
-	if len(apiKey) == 0 {
-		log.Fatal("Missing necessary environment variables - refer to README.md")
-	}
 
 	if len(baseUrl) == 0 {
 		baseUrl = "https://mailosaur.com/"
@@ -22,7 +16,7 @@ func init() {
 }
 
 func TestUnauthorized(t *testing.T) {
-	client := New(os.Getenv("invalid_key"))
+	client := New("invalid_key")
 	client.baseUrl = baseUrl
 	_, err := client.Servers.List()
 
@@ -31,7 +25,8 @@ func TestUnauthorized(t *testing.T) {
 }
 
 func TestNotFound(t *testing.T) {
-	client := New(os.Getenv("MAILOSAUR_API_KEY"))
+	client := New()
+	client.baseUrl = baseUrl
 	_, err := client.Servers.Get("not_found")
 
 	assert.Error(t, err)
@@ -39,7 +34,8 @@ func TestNotFound(t *testing.T) {
 }
 
 func TestBadRequest(t *testing.T) {
-	client := New(os.Getenv("MAILOSAUR_API_KEY"))
+	client := New()
+	client.baseUrl = baseUrl
 	serverCreateOptions := ServerCreateOptions{}
 
 	_, err := client.Servers.Create(serverCreateOptions)
