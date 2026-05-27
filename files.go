@@ -6,20 +6,32 @@ import (
 	"time"
 )
 
+// FilesService provides operations for downloading the raw content associated with a
+// message — file attachments, the full EML source of an email, and rendered email previews.
+// Accessed via the Files field of MailosaurClient.
 type FilesService struct {
 	client *MailosaurClient
 }
 
+// GetAttachment downloads a single attachment. The id argument is the identifier of the
+// required attachment, and it returns a byte slice containing the attachment's binary content.
 func (s *FilesService) GetAttachment(id string) ([]byte, error) {
 	result, err := s.client.HttpGet(nil, "api/files/attachments/"+id)
 	return result.([]byte), err
 }
 
+// GetEmail downloads an EML file representing the specified email. The id argument is the
+// identifier of the required message, and it returns a byte slice containing the raw EML
+// content of the email.
 func (s *FilesService) GetEmail(id string) ([]byte, error) {
 	result, err := s.client.HttpGet(nil, "api/files/email/"+id)
 	return result.([]byte), err
 }
 
+// GetPreview downloads a screenshot of your email rendered in a real email client. The id
+// argument is the identifier of the required preview, and it returns a byte slice containing
+// the preview screenshot image. It returns a mailosaurError with error type preview_timeout
+// if the preview is not generated within the time limit.
 func (s *FilesService) GetPreview(id string) ([]byte, error) {
 	timeout := 120
 	pollCount := 0

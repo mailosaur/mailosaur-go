@@ -8,6 +8,9 @@ import (
 	"time"
 )
 
+// MessagesService provides operations for finding, retrieving, creating, forwarding,
+// replying to, and deleting the email and SMS messages received by your Mailosaur servers.
+// Accessed via the Messages field of MailosaurClient.
 type MessagesService struct {
 	client *MailosaurClient
 }
@@ -160,6 +163,10 @@ type PreviewRequestOptions struct {
 	EmailClients []string `json:"emailClients"`
 }
 
+// List returns a list of your messages in summary form, sorted by received date with the
+// most recently-received messages appearing first. The params argument specifies the server
+// to list messages from along with paging and filtering options. It returns a
+// MessageListResult containing the message summaries.
 func (s *MessagesService) List(params *MessageListParams) (*MessageListResult, error) {
 	u := buildPagePath(
 		"api/messages?server="+params.Server,
@@ -173,6 +180,12 @@ func (s *MessagesService) List(params *MessageListParams) (*MessageListResult, e
 	return result.(*MessageListResult), err
 }
 
+// Get waits for a message to be found, returning as soon as a message matching the given
+// search criteria is found. This is the most efficient way to look up a message and is
+// recommended wherever possible. The params argument specifies the server to search and
+// related options, and criteria specifies what to match. It returns the first matching
+// Message. It returns a mailosaurError with error type no_messages_found if no matching
+// message exists, or search_timeout if no matching message arrives before the timeout elapses.
 func (s *MessagesService) Get(params *MessageSearchParams, criteria *SearchCriteria) (*Message, error) {
 	// Timeout defaulted to 10s, receivedAfter to 1h
 	if params.ReceivedAfter.IsZero() {
@@ -194,6 +207,12 @@ func (s *MessagesService) Get(params *MessageSearchParams, criteria *SearchCrite
 	return s.GetById(result.Items[0].Id)
 }
 
+// Search returns a list of messages matching the given search criteria, in summary form,
+// sorted by received date with the most recently-received messages appearing first. The
+// params argument specifies the server to search along with paging and timeout options, and
+// criteria specifies what to match. It returns a MessageListResult containing the matching
+// message summaries. It returns a mailosaurError with error type search_timeout if no
+// matching message is found before the timeout elapses, unless ErrorOnTimeout is set to false.
 func (s *MessagesService) Search(params *MessageSearchParams, criteria *SearchCriteria) (*MessageListResult, error) {
 	pollCount := 0
 	startTime := time.Now()
@@ -269,34 +288,57 @@ func (s *MessagesService) Search(params *MessageSearchParams, criteria *SearchCr
 	}
 }
 
+// GetById retrieves the detail for a single message. It must be used in conjunction with
+// either List or Search in order to obtain the unique identifier for the required message.
+// The id argument is the unique identifier of the message to retrieve, and it returns the
+// full Message.
 func (s *MessagesService) GetById(id string) (*Message, error) {
 	result, err := s.client.HttpGet(&Message{}, "api/messages/"+id)
 	return result.(*Message), err
 }
 
+// Delete permanently deletes a message, along with any attachments related to it. This
+// operation cannot be undone. The id argument is the identifier of the message to delete.
 func (s *MessagesService) Delete(id string) error {
 	return s.client.HttpDelete("api/messages/" + id)
 }
 
+// DeleteAll permanently deletes all messages within a server. This operation cannot be
+// undone. The server argument is the unique identifier of the server to clear.
 func (s *MessagesService) DeleteAll(server string) error {
 	return s.client.HttpDelete("api/messages?server=" + server)
 }
 
+// Create creates a new message that can be sent to a verified email address. This is useful
+// when you want an email to trigger a workflow in your product. The server argument is the
+// unique identifier of the server, and messageCreateOptions specifies the message to create.
+// It returns the newly-created Message.
 func (s *MessagesService) Create(server string, messageCreateOptions *MessageCreateOptions) (*Message, error) {
 	result, err := s.client.HttpPost(&Message{}, "api/messages?server="+server, messageCreateOptions)
 	return result.(*Message), err
 }
 
+// Forward forwards the specified message to a verified email address. This is useful for
+// simulating a user forwarding one of your email messages. The id argument is the unique
+// identifier of the message to forward, and messageForwardOptions specifies the forwarding
+// options. It returns the forwarded Message.
 func (s *MessagesService) Forward(id string, messageForwardOptions *MessageForwardOptions) (*Message, error) {
 	result, err := s.client.HttpPost(&Message{}, "api/messages/"+id+"/forward", messageForwardOptions)
 	return result.(*Message), err
 }
 
+// Reply sends a reply to the specified message. This is useful for simulating a user
+// replying to one of your email or SMS messages. The id argument is the unique identifier of
+// the message to reply to, and messageReplyOptions specifies the reply options. It returns
+// the reply Message.
 func (s *MessagesService) Reply(id string, messageReplyOptions *MessageReplyOptions) (*Message, error) {
 	result, err := s.client.HttpPost(&Message{}, "api/messages/"+id+"/reply", messageReplyOptions)
 	return result.(*Message), err
 }
 
+// GeneratePreviews generates screenshots of an email rendered in the specified email
+// clients. The id argument is the identifier of the email to preview, and options specifies
+// which email clients to use. It returns a PreviewListResult containing the generated previews.
 func (s *MessagesService) GeneratePreviews(id string, options *PreviewRequestOptions) (*PreviewListResult, error) {
 	result, err := s.client.HttpPost(&PreviewListResult{}, "api/messages/"+id+"/screenshots", options)
 	return result.(*PreviewListResult), err
