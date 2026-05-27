@@ -11,18 +11,29 @@ import (
 	"time"
 )
 
+// MailosaurClient is the main entry point to the Mailosaur API. Construct an instance with
+// your API key (or set the MAILOSAUR_API_KEY environment variable) via New, then use the
+// operation service fields (Messages, Servers, Files, Devices, Analysis, Previews, Usage) to
+// automate email and SMS testing.
 type MailosaurClient struct {
 	baseUrl    string
 	apiKey     string
 	userAgent  string
 	httpClient *http.Client
 
-	Servers  *ServersService
+	// Servers provides operations for creating and managing your Mailosaur servers (virtual inboxes).
+	Servers *ServersService
+	// Messages provides operations for finding, retrieving, creating, and managing email and SMS messages.
 	Messages *MessagesService
+	// Analysis provides operations for analyzing email content and deliverability, including spam scoring.
 	Analysis *AnalysisService
-	Files    *FilesService
-	Usage    *UsageService
-	Devices  *DevicesService
+	// Files provides operations for downloading attachments, EML source, and email preview screenshots.
+	Files *FilesService
+	// Usage provides operations for inspecting account usage limits and recent transactional usage.
+	Usage *UsageService
+	// Devices provides operations for managing virtual security devices and retrieving their one-time passwords.
+	Devices *DevicesService
+	// Previews provides operations for discovering the email clients available for generating email previews.
 	Previews *PreviewsService
 }
 
@@ -50,6 +61,9 @@ func (e *mailosaurError) Error() string {
 	return e.Message
 }
 
+// New returns a new Mailosaur client. An API key may be passed as the optional argument;
+// if omitted or empty, the MAILOSAUR_API_KEY environment variable is used instead. The
+// client is configured with a default HTTP client with a one-minute timeout.
 func New(apiKey ...string) *MailosaurClient {
 	resolvedKey := ""
 	if len(apiKey) > 0 && len(apiKey[0]) > 0 {
@@ -60,6 +74,8 @@ func New(apiKey ...string) *MailosaurClient {
 	return NewWithClient(resolvedKey, &http.Client{Timeout: time.Minute})
 }
 
+// NewWithClient returns a new Mailosaur client that uses the supplied API key and HTTP
+// client, allowing the underlying transport, timeouts, and proxies to be customized.
 func NewWithClient(apiKey string, httpClient *http.Client) *MailosaurClient {
 	c := &MailosaurClient{
 		baseUrl:    "https://mailosaur.com/",

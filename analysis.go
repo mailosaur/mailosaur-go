@@ -1,5 +1,8 @@
 package mailosaur
 
+// AnalysisService provides operations for analyzing the content and deliverability of an
+// email, including SpamAssassin scoring and per-provider deliverability reports. Accessed via
+// the Analysis field of MailosaurClient.
 type AnalysisService struct {
 	client *MailosaurClient
 }
@@ -66,11 +69,16 @@ type DeliverabilityReport struct {
 	SpamAssassin *SpamAssassinResult          `json:"spamAssassin"`
 }
 
+// Spam performs a spam analysis of an email. The id argument is the identifier of the
+// message to analyze, and it returns a SpamAnalysisResult containing the spam score and
+// filter results.
 func (s *AnalysisService) Spam(id string) (*SpamAnalysisResult, error) {
 	result, err := s.client.HttpGet(&SpamAnalysisResult{}, "api/analysis/spam/"+id)
 	return result.(*SpamAnalysisResult), err
 }
 
+// Deliverability performs a deliverability report of an email. The id argument is the
+// identifier of the message to analyze, and it returns a DeliverabilityReport for the email.
 func (s *AnalysisService) Deliverability(id string) (*DeliverabilityReport, error) {
 	result, err := s.client.HttpGet(&DeliverabilityReport{}, "api/analysis/deliverability/"+id)
 	return result.(*DeliverabilityReport), err
