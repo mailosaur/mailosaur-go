@@ -9,8 +9,8 @@ import (
 )
 
 // MessagesService provides operations for finding, retrieving, creating, forwarding,
-// replying to, and deleting the email and SMS messages received by your Mailosaur servers.
-// Accessed via the Messages field of MailosaurClient.
+// replying to, and deleting the email and SMS messages received by your Mailosaur inboxes
+// (servers). Accessed via the Messages field of MailosaurClient.
 type MessagesService struct {
 	client *MailosaurClient
 }
@@ -164,8 +164,8 @@ type PreviewRequestOptions struct {
 }
 
 // List returns a list of your messages in summary form, sorted by received date with the
-// most recently-received messages appearing first. The params argument specifies the server
-// to list messages from along with paging and filtering options. It returns a
+// most recently-received messages appearing first. The params argument specifies the inbox
+// (server) to list messages from along with paging and filtering options. It returns a
 // MessageListResult containing the message summaries.
 func (s *MessagesService) List(params *MessageListParams) (*MessageListResult, error) {
 	u := buildPagePath(
@@ -182,7 +182,7 @@ func (s *MessagesService) List(params *MessageListParams) (*MessageListResult, e
 
 // Get waits for a message to be found, returning as soon as a message matching the given
 // search criteria is found. This is the most efficient way to look up a message and is
-// recommended wherever possible. The params argument specifies the server to search and
+// recommended wherever possible. The params argument specifies the inbox (server) to search and
 // related options, and criteria specifies what to match. It returns the first matching
 // Message. It returns a mailosaurError with error type no_messages_found if no matching
 // message exists, or search_timeout if no matching message arrives before the timeout elapses.
@@ -209,7 +209,7 @@ func (s *MessagesService) Get(params *MessageSearchParams, criteria *SearchCrite
 
 // Search returns a list of messages matching the given search criteria, in summary form,
 // sorted by received date with the most recently-received messages appearing first. The
-// params argument specifies the server to search along with paging and timeout options, and
+// params argument specifies the inbox (server) to search along with paging and timeout options, and
 // criteria specifies what to match. It returns a MessageListResult containing the matching
 // message summaries. It returns a mailosaurError with error type search_timeout if no
 // matching message is found before the timeout elapses, unless ErrorOnTimeout is set to false.
@@ -303,15 +303,15 @@ func (s *MessagesService) Delete(id string) error {
 	return s.client.HttpDelete("api/messages/" + id)
 }
 
-// DeleteAll permanently deletes all messages within a server. This operation cannot be
-// undone. The server argument is the unique identifier of the server to clear.
+// DeleteAll permanently deletes all messages within an inbox (server). This operation cannot
+// be undone. The server argument is the unique identifier of the inbox (server) to clear.
 func (s *MessagesService) DeleteAll(server string) error {
 	return s.client.HttpDelete("api/messages?server=" + server)
 }
 
 // Create creates a new message that can be sent to a verified email address. This is useful
 // when you want an email to trigger a workflow in your product. The server argument is the
-// unique identifier of the server, and messageCreateOptions specifies the message to create.
+// unique identifier of the inbox (server), and messageCreateOptions specifies the message to create.
 // It returns the newly-created Message.
 func (s *MessagesService) Create(server string, messageCreateOptions *MessageCreateOptions) (*Message, error) {
 	result, err := s.client.HttpPost(&Message{}, "api/messages?server="+server, messageCreateOptions)

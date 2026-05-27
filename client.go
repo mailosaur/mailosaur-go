@@ -21,7 +21,7 @@ type MailosaurClient struct {
 	userAgent  string
 	httpClient *http.Client
 
-	// Servers provides operations for creating and managing your Mailosaur servers (virtual inboxes).
+	// Servers provides operations for creating and managing your Mailosaur inboxes (servers).
 	Servers *ServersService
 	// Messages provides operations for finding, retrieving, creating, and managing email and SMS messages.
 	Messages *MessagesService
